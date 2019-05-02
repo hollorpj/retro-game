@@ -14,8 +14,12 @@ document.addEventListener('DOMContentLoaded', function() {
 	// main
 
 	let gameManager = new GameManager();
-	gameManager.loadMap(new NewTown());
-	gameManager.play();
+	var map = new NewTown();
+	map.getImageLoadPromise().then(function() {
+		gameManager.loadMap(map);
+		gameManager.play();	
+	});
+	
 
 
 

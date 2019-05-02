@@ -2,21 +2,32 @@ class NewTown {
 	
 	tileMapping;
 
+	initializedPromise;
+
 	constructor() {
 		this.tileMapping = [];
 		let pinkBrick = TileCache.getBottomLeftPinkBrick();
 		
+		var that = this;
+		this.initializedPromise = new Promise(function(resolve, object) {
+			
+			that.waitForImagesLoad([pinkBrick]).then(function() {
+				let t0 = new Tile([ pinkBrick ], 0, 0);
+				let t1 = new Tile([ pinkBrick ], 1, 0);
+				let t2 = new Tile([ pinkBrick ], 2, 0);
+
+				that.tileMapping = [ t0, t1, t2 ];	
+				resolve();
+			});
 
 
-		this.waitForImagesLoad([pinkBrick]).then(function() {
-			console.log('carry on');
-
-			let t0 = new Tile([ pinkBrick ], 0, 0);
-			let t1 = new Tile([ pinkBrick ], 1, 0);
-			let t2 = new Tile([ pinkBrick ], 2, 0);
-			NewTown.tileMapping = [ t0, t1, t2 ];	
-		});
+		})
 		
+		
+	}
+
+	getImageLoadPromise() {
+		return this.initializedPromise;
 	}
 
 	draw() {
@@ -30,22 +41,20 @@ class NewTown {
 		return new Promise(function(resolve, object) {
 			let numLoaded = 0;
 
-
   			for (let i = 0; i < images.length; i++) {
 				if (images[i].complete) {
 					numLoaded++;
 					if (numLoaded === images.length) {
-						console.log('done');
 						resolve();
 					}
 
 					continue;
 				} 
 
+
 				images[i].addEventListener('load', function() {
 					numLoaded++;
 					if (numLoaded === images.length) {
-						console.log('done');
 						resolve();
 					}
 				});
